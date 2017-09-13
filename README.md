@@ -15,5 +15,5 @@ Write a password validation service, meant to be configurable via IoC (using dep
   `mvn clean test` will run all unit tests
 * `PasswordValidationRule` is the inteface we need to implement to add a new validation rule.
 * `PasswordValidationService` is the service where we inject all the validation rules and validate the password.
-* For dynamically enabling/disabling rules, we will configure applicable rules in `application.properties` file with `password.validation.rules` propery.
+* For dynamically enabling/disabling rules, we can configure applicable rules in `application.properties` file with `password.validation.rules` propery.
 * Implemented `PasswordValidationController` as client for password validation service. Its a Rest controller.
