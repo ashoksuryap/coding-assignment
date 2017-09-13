@@ -16,4 +16,5 @@ Write a password validation service, meant to be configurable via IoC (using dep
 * `PasswordValidationRule` is the inteface we need to implement to add a new validation rule.
 * `PasswordValidationService` is the service where we inject all the validation rules and validate the password.
 * For dynamically enabling/disabling rules, we can configure rules in `application.properties` file with `password.validation.rules` propery. Only the rules specified with this property are applied during password validation.
+* Password min and max length are configurable in `application.properties` file
 * Implemented `PasswordValidationController` as client for password validation service. Its a Rest controller.
