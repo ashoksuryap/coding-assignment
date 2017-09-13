@@ -1,6 +1,7 @@
 package com.mckesson.codingassignment.rule;
 
 import com.mckesson.codingassignment.exception.PasswordValidationException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
@@ -11,8 +12,12 @@ import java.text.MessageFormat;
 @Component("LENGTH")
 public class PasswordLengthValidationRule implements PasswordValidationRule {
 
-    private static final int MIN_LENGTH = 5;
-    private static final int MAX_LENGTH = 12;
+    @Value("${password.validation.min.length:0}")
+    private int passwordMinLength;
+
+    @Value("${password.validation.max.length:0}")
+    private int passwordMaxLength;
+
     private static final String VALIDATION_MESSAGE = "password length must be between {0} and {1} characters";
 
     /**
@@ -24,8 +29,8 @@ public class PasswordLengthValidationRule implements PasswordValidationRule {
     @Override
     public void validate(String password) {
         int passwordLength = password.length();
-        if (passwordLength < MIN_LENGTH || passwordLength > MAX_LENGTH) {
-            throw new PasswordValidationException(MessageFormat.format(VALIDATION_MESSAGE, MIN_LENGTH, MAX_LENGTH));
+        if (passwordLength < passwordMinLength || passwordLength > passwordMaxLength) {
+            throw new PasswordValidationException(MessageFormat.format(VALIDATION_MESSAGE, passwordMinLength, passwordMaxLength));
         }
     }
 }

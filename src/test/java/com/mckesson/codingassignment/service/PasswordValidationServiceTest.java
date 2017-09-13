@@ -23,6 +23,9 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class PasswordValidationServiceTest {
 
+    private static final int PASSWORD_MIN_LENGTH = 5;
+    private static final int PASSWORD_MAX_LENGTH = 12;
+
     @Spy
     private PasswordValidationRule alphaNumericPasswordValidationRule = new AlphaNumericPasswordValidationRule();
 
@@ -52,6 +55,14 @@ public class PasswordValidationServiceTest {
         passwordValidationRules.put("LENGTH",passwordLengthValidationRule );
         passwordValidationRules.put("CHAR_SEQUENCE",characterSequencePasswordValidationRule );
         passwordValidationService = new PasswordValidationServiceImpl(passwordValidationRules);
+
+        Field passwordMinLengthField = ReflectionUtils.findField(PasswordLengthValidationRule.class, "passwordMinLength");
+        ReflectionUtils.makeAccessible(passwordMinLengthField);
+        ReflectionUtils.setField(passwordMinLengthField, passwordLengthValidationRule, PASSWORD_MIN_LENGTH);
+
+        Field passwordMaxLengthField = ReflectionUtils.findField(PasswordLengthValidationRule.class, "passwordMaxLength");
+        ReflectionUtils.makeAccessible(passwordMaxLengthField);
+        ReflectionUtils.setField(passwordMaxLengthField, passwordLengthValidationRule, PASSWORD_MAX_LENGTH);
     }
 
     @Test
@@ -169,6 +180,25 @@ public class PasswordValidationServiceTest {
         verify(passwordLengthValidationRule  , times(1)).validate("test1234");
         verify(numericPasswordValidationRule  , times(1)).validate("test1234");
         verifyZeroInteractions(alphaNumericPasswordValidationRule,
+                letterPasswordValidationRule,
+                characterSequencePasswordValidationRule);
+    }
+
+    @Test
+    public void testValidate_invalidRuleName() {
+        expectedEx.expect(PasswordValidationException.class);
+        expectedEx.expectMessage("configured password validation rule INVALID is not available in system.");
+
+        List<String> configuredRules = Arrays.asList("INVALID");
+
+        Field configuredRulesField = ReflectionUtils.findField(PasswordValidationServiceImpl.class, "configuredRules");
+        ReflectionUtils.makeAccessible(configuredRulesField);
+        ReflectionUtils.setField(configuredRulesField, passwordValidationService, configuredRules);
+
+        passwordValidationService.validate("test1234");
+        verifyZeroInteractions(alphaNumericPasswordValidationRule,
+                passwordLengthValidationRule,
+                numericPasswordValidationRule,
                 letterPasswordValidationRule,
                 characterSequencePasswordValidationRule);
     }

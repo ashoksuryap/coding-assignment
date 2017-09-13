@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,6 +25,8 @@ public class PasswordValidationServiceImpl implements PasswordValidationService 
 
     @Value("#{'${password.validation.rules}'.split(',')}")
     private List<String> configuredRules;
+
+    private static final String INVALID_RULE_MESSAGE = "configured password validation rule {0} is not available in system.";
 
     @Autowired
     public PasswordValidationServiceImpl(Map<String, PasswordValidationRule> passwordValidationRules) {
@@ -59,7 +62,7 @@ public class PasswordValidationServiceImpl implements PasswordValidationService 
 
     private void isValidRule(String configuredRule) {
         if(passwordValidationRules.get(configuredRule) == null){
-            throw new PasswordValidationException("configured password validation rule "+ configuredRule +" is not available in system. Please correct it.");
+            throw new PasswordValidationException(MessageFormat.format(INVALID_RULE_MESSAGE, configuredRule));
         }
     }
 
