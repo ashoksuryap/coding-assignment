@@ -10,9 +10,10 @@ Write a password validation service, meant to be configurable via IoC (using dep
 ### IMPLEMENTATION
 * using Spring Boot for rapid application ddevelopment.
 * using Spring IOC container for Dependency Injection 
+* using Jacoco to measure the code coverage of application
 * using Maven as a build tool.<br>
   `mvn clean install` will generate a jar file in application target folder.
-  `mvn clean test` will run all unit tests
+  `mvn clean test` will run all unit tests and Jacoco output report will be generated in target directory under jacoco-ut folder 
 * `PasswordValidationRule` is the inteface we need to implement to add a new validation rule.
 * `PasswordValidationService` is the service where we inject all the validation rules and validate the password.
 * For dynamically enabling/disabling rules, we can configure rules in `application.properties` file with `password.validation.rules` propery. Only the rules specified with this property are applied during password validation.
