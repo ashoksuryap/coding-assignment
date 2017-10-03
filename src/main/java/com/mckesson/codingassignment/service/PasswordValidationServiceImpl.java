@@ -65,8 +65,4 @@ public class PasswordValidationServiceImpl implements PasswordValidationService 
             throw new PasswordValidationException(MessageFormat.format(INVALID_RULE_MESSAGE, configuredRule));
         }
     }
-
-    public void setConfiguredRules(List<String> configuredRules) {
-        this.configuredRules = configuredRules;
-    }
 }
