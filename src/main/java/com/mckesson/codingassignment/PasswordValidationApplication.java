@@ -4,9 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class CodingAssignmentApplication {
+public class PasswordValidationApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(CodingAssignmentApplication.class, args);
+		SpringApplication.run(PasswordValidationApplication.class, args);
 	}
 }

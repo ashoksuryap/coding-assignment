@@ -10,9 +10,8 @@ import org.springframework.stereotype.Component;
 @Component("LETTER")
 public class LetterPasswordValidationRule implements PasswordValidationRule {
 
-    private static final String LETTER_MANDATORY_VALIDATION_MESSAGE = "password must contain at least one letter";
-    private static final String LETTER_LOWER_CASE_VALIDATION_MESSAGE = "password must contain lower case letters";
-
+    private static final String VALIDATION_MESSAGE = "password must contain at least one letter and all letters should be in lower case";
+    private static final String REGEX = "[^\\p{Upper}]*[\\p{Lower}]+[^\\p{Upper}]*";
     /**
      * This method checks whether provided password contains atleast one letter and all letters are in lower case
      *
@@ -22,14 +21,9 @@ public class LetterPasswordValidationRule implements PasswordValidationRule {
      */
     @Override
     public void validate(String password) {
-        boolean foundALetter = password.chars().anyMatch(Character::isLetter);
-
-        if (!foundALetter)
-            throw new PasswordValidationException(LETTER_MANDATORY_VALIDATION_MESSAGE);
-
-        boolean areLowerCaseLetters = password.chars().filter(Character::isLetter).allMatch(Character::isLowerCase);
-        if (!areLowerCaseLetters)
-            throw new PasswordValidationException(LETTER_LOWER_CASE_VALIDATION_MESSAGE);
-
+        boolean foundMatch = password.matches(REGEX);
+        if (!foundMatch) {
+            throw new PasswordValidationException(VALIDATION_MESSAGE);
+        }
     }
 }

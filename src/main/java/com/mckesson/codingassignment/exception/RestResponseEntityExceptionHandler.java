@@ -18,7 +18,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
      * This method handles PasswordValidationException
      * @param ex
      * @param request
-     * @return ResponseEntity
+     * @return ResponseEntity - Returns status code 400 when password validation fails
      */
     @ExceptionHandler(PasswordValidationException.class)
     protected ResponseEntity<Object> handleException(PasswordValidationException ex, WebRequest request) {
@@ -31,7 +31,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
      * @param headers
      * @param status
      * @param request
-     * @return ResponseEntity
+     * @return ResponseEntity - Returns status code 400 when request body is null
      */
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {

@@ -21,16 +21,47 @@ import java.util.stream.Collectors;
 @Service
 public class PasswordValidationServiceImpl implements PasswordValidationService {
 
-    private Map<String, PasswordValidationRule> passwordValidationRules;
-
-    @Value("#{'${password.validation.rules}'.split(',')}")
-    private List<String> configuredRules;
+    List<PasswordValidationRule> configuredPasswordValidationRules = new ArrayList<>();
 
     private static final String INVALID_RULE_MESSAGE = "configured password validation rule {0} is not available in system.";
 
+    /**
+     *
+     * @param passwordValidationRules - All available rules
+     * @param configuredRules - Rules defined in configuration file
+     */
     @Autowired
-    public PasswordValidationServiceImpl(Map<String, PasswordValidationRule> passwordValidationRules) {
-        this.passwordValidationRules = passwordValidationRules;
+    public PasswordValidationServiceImpl(Map<String, PasswordValidationRule> passwordValidationRules,
+                                         @Value("#{'${password.validation.rules:}'.split(',')}") List<String> configuredRules) {
+        List<String> configuredRulesList = filterNonEmptyConfiguredRules(configuredRules);
+        validateConfiguredRules(configuredRulesList, passwordValidationRules);
+        populateConfiguredPasswordValidationRules(passwordValidationRules, configuredRulesList);
+    }
+
+    private List<String> filterNonEmptyConfiguredRules(List<String> configuredRules) {
+        List<String> configuredRulesList = Collections.EMPTY_LIST;
+        if (!CollectionUtils.isEmpty(configuredRules)) {
+            configuredRulesList = configuredRules.stream().filter(configuredRule -> !StringUtils.isEmpty(configuredRule)).collect(Collectors.toList());
+        }
+        return configuredRulesList;
+    }
+
+    private void validateConfiguredRules(List<String> configuredRulesList, Map<String, PasswordValidationRule> passwordValidationRules) {
+        configuredRulesList.forEach(configuredRule -> isValidRule(configuredRule, passwordValidationRules));
+    }
+
+    private void isValidRule(String configuredRule, Map<String, PasswordValidationRule> passwordValidationRules) {
+        if (passwordValidationRules.get(configuredRule) == null) {
+            throw new PasswordValidationException(MessageFormat.format(INVALID_RULE_MESSAGE, configuredRule));
+        }
+    }
+
+    private void populateConfiguredPasswordValidationRules(Map<String, PasswordValidationRule> passwordValidationRules, List<String> configuredRulesList) {
+        if (CollectionUtils.isEmpty(configuredRulesList)) {
+            configuredPasswordValidationRules.addAll(passwordValidationRules.values());
+        } else {
+            configuredRulesList.stream().map(configuredRule -> passwordValidationRules.get(configuredRule)).forEach(configuredPasswordValidationRules::add);
+        }
     }
 
     @Override
@@ -38,31 +69,6 @@ public class PasswordValidationServiceImpl implements PasswordValidationService 
         if (StringUtils.isEmpty(password)) {
             throw new PasswordValidationException("password cannot be empty or null");
         }
-        getConfiguredPasswordValidationRules().forEach(passwordValidationRule -> passwordValidationRule.validate(password));
-    }
-
-    private List<PasswordValidationRule> getConfiguredPasswordValidationRules() {
-        List<String> configuredRulesList = getConfiguredRules();
-        if (CollectionUtils.isEmpty(configuredRulesList)) {
-            return new ArrayList<>(passwordValidationRules.values());
-        }
-        return configuredRulesList.stream().map(configuredRule -> passwordValidationRules.get(configuredRule)).collect(Collectors.toList());
-    }
-
-    public List<String> getConfiguredRules() {
-        if (CollectionUtils.isEmpty(configuredRules)) return Collections.EMPTY_LIST;
-        List<String> configuredRulesList = configuredRules.stream().filter(configuredRule -> !StringUtils.isEmpty(configuredRule)).collect(Collectors.toList());
-        validateConfiguredRules(configuredRulesList);
-        return configuredRulesList;
-    }
-
-    private void validateConfiguredRules(List<String> configuredRulesList) {
-        configuredRulesList.forEach(configuredRule -> isValidRule(configuredRule));
-    }
-
-    private void isValidRule(String configuredRule) {
-        if(passwordValidationRules.get(configuredRule) == null){
-            throw new PasswordValidationException(MessageFormat.format(INVALID_RULE_MESSAGE, configuredRule));
-        }
+        configuredPasswordValidationRules.forEach(passwordValidationRule -> passwordValidationRule.validate(password));
     }
 }

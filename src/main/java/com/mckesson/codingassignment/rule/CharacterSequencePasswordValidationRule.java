@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 public class CharacterSequencePasswordValidationRule implements PasswordValidationRule {
 
     private static final String VALIDATION_MESSAGE = "password must not contain any sequence of characters immediately followed by the same sequence";
-    private Pattern charSequenceRepetitionPattern = Pattern.compile("(\\w{2,})\\1");
+    private Pattern passwordPattern = Pattern.compile("(\\p{Alnum}{2,})\\1");
 
     /**
      * This method checks whether provided password contains any sequence of characters immediately followed by the same sequence
@@ -24,7 +24,7 @@ public class CharacterSequencePasswordValidationRule implements PasswordValidati
      */
     @Override
     public void validate(String password) {
-        Matcher matcher = charSequenceRepetitionPattern.matcher(password);
+        Matcher matcher = passwordPattern.matcher(password);
         if (matcher.find()) {
             throw new PasswordValidationException(VALIDATION_MESSAGE);
         }

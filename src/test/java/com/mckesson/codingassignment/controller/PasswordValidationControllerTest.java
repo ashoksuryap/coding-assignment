@@ -49,7 +49,7 @@ public class PasswordValidationControllerTest {
         ResponseEntity<String> responseEntity =
                 restTemplate.postForEntity("/password/validate", password, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-        assertEquals("password must contain at least one letter", responseEntity.getBody());
+        assertEquals("password must contain at least one letter and all letters should be in lower case", responseEntity.getBody());
     }
 
     @Test
@@ -58,7 +58,7 @@ public class PasswordValidationControllerTest {
         ResponseEntity<String> responseEntity =
                 restTemplate.postForEntity("/password/validate", password, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-        assertEquals("password must contain lower case letters", responseEntity.getBody());
+        assertEquals("password must contain at least one letter and all letters should be in lower case", responseEntity.getBody());
     }
 
     @Test

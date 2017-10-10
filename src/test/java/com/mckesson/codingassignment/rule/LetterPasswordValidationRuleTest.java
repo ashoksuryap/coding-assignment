@@ -20,7 +20,7 @@ public class LetterPasswordValidationRuleTest {
     @Test
     public void testValidate_upperCase(){
         expectedEx.expect(PasswordValidationException.class);
-        expectedEx.expectMessage("password must contain lower case letters");
+        expectedEx.expectMessage("password must contain at least one letter and all letters should be in lower case");
 
         passwordValidationRule.validate("teSt");
     }
@@ -28,13 +28,13 @@ public class LetterPasswordValidationRuleTest {
     @Test
     public void testValidate_digits(){
         expectedEx.expect(PasswordValidationException.class);
-        expectedEx.expectMessage("password must contain at least one letter");
+        expectedEx.expectMessage("password must contain at least one letter and all letters should be in lower case");
 
         passwordValidationRule.validate("123");
     }
 
     @Test
     public void testValidate_specialChars(){
-        passwordValidationRule.validate("test@$3");
+        passwordValidationRule.validate("@@test@$3");
     }
 }

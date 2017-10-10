@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 public class AlphaNumericPasswordValidationRule implements PasswordValidationRule {
 
     private static final String VALIDATION_MESSAGE = "password must be a combination of alphanumeric characters";
+    private static final String REGEX = "[\\p{Alnum}]*";
+
 
     /**
      * This method checks whether provided password has only letters and digits
@@ -19,8 +21,8 @@ public class AlphaNumericPasswordValidationRule implements PasswordValidationRul
      */
     @Override
     public void validate(String password) {
-        boolean isA1phaNumeric = password.chars().allMatch(Character::isLetterOrDigit);
-        if (!isA1phaNumeric) {
+        boolean foundMatch = password.matches(REGEX);
+        if (!foundMatch) {
             throw new PasswordValidationException(VALIDATION_MESSAGE);
         }
     }
