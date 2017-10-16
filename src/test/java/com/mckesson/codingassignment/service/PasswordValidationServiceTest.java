@@ -2,7 +2,10 @@ package com.mckesson.codingassignment.service;
 
 
 import com.mckesson.codingassignment.exception.PasswordValidationException;
-import com.mckesson.codingassignment.rule.*;
+import com.mckesson.codingassignment.rule.AlphaNumericPasswordValidationRule;
+import com.mckesson.codingassignment.rule.CharacterSequencePasswordValidationRule;
+import com.mckesson.codingassignment.rule.PasswordLengthValidationRule;
+import com.mckesson.codingassignment.rule.PasswordValidationRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -24,12 +27,6 @@ public class PasswordValidationServiceTest {
     private PasswordValidationRule alphaNumericPasswordValidationRule = new AlphaNumericPasswordValidationRule();
 
     @Spy
-    private PasswordValidationRule letterPasswordValidationRule = new LetterPasswordValidationRule();
-
-    @Spy
-    private PasswordValidationRule numericPasswordValidationRule = new NumericPasswordValidationRule();
-
-    @Spy
     private PasswordValidationRule passwordLengthValidationRule = new PasswordLengthValidationRule(PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH);
 
     @Spy
@@ -47,8 +44,6 @@ public class PasswordValidationServiceTest {
 
         passwordValidationService.validate("test1234");
         verify(alphaNumericPasswordValidationRule, times(1)).validate("test1234");
-        verify(letterPasswordValidationRule, times(1)).validate("test1234");
-        verify(numericPasswordValidationRule, times(1)).validate("test1234");
         verify(passwordLengthValidationRule, times(1)).validate("test1234");
         verify(characterSequencePasswordValidationRule, times(1)).validate("test1234");
     }
@@ -63,23 +58,6 @@ public class PasswordValidationServiceTest {
 
         passwordValidationService.validate(null);
         verifyZeroInteractions(alphaNumericPasswordValidationRule,
-                                letterPasswordValidationRule,
-                                numericPasswordValidationRule,
-                                passwordLengthValidationRule,
-                                characterSequencePasswordValidationRule);
-    }
-
-    @Test
-    public void testValidate_alphaNumeric() {
-        Map<String, PasswordValidationRule> passwordValidationRules = getPasswordValidationRules();
-        List<String> configuredRules = Arrays.asList("ALPHA_NUMERIC");
-
-        passwordValidationService = new PasswordValidationServiceImpl(passwordValidationRules, configuredRules);
-
-        passwordValidationService.validate("test1234");
-        verify(alphaNumericPasswordValidationRule, times(1)).validate("test1234");
-        verifyZeroInteractions(letterPasswordValidationRule,
-                                numericPasswordValidationRule,
                                 passwordLengthValidationRule,
                                 characterSequencePasswordValidationRule);
     }
@@ -87,30 +65,26 @@ public class PasswordValidationServiceTest {
     @Test
     public void testValidate_letter() {
         Map<String, PasswordValidationRule> passwordValidationRules = getPasswordValidationRules();
-        List<String> configuredRules = Arrays.asList("LETTER");
+        List<String> configuredRules = Arrays.asList("ALPHA_NUMERIC");
 
         passwordValidationService = new PasswordValidationServiceImpl(passwordValidationRules, configuredRules);
 
         passwordValidationService.validate("test1234");
-        verify(letterPasswordValidationRule, times(1)).validate("test1234");
-        verifyZeroInteractions(alphaNumericPasswordValidationRule,
-                numericPasswordValidationRule,
-                passwordLengthValidationRule,
+        verify(alphaNumericPasswordValidationRule, times(1)).validate("test1234");
+        verifyZeroInteractions(passwordLengthValidationRule,
                 characterSequencePasswordValidationRule);
     }
 
     @Test
     public void testValidate_numeric() {
         Map<String, PasswordValidationRule> passwordValidationRules = getPasswordValidationRules();
-        List<String> configuredRules = Arrays.asList("NUMERIC");
+        List<String> configuredRules = Arrays.asList("ALPHA_NUMERIC");
 
         passwordValidationService = new PasswordValidationServiceImpl(passwordValidationRules, configuredRules);
 
         passwordValidationService.validate("test1234");
-        verify(numericPasswordValidationRule , times(1)).validate("test1234");
-        verifyZeroInteractions(alphaNumericPasswordValidationRule,
-                letterPasswordValidationRule,
-                passwordLengthValidationRule,
+        verify(alphaNumericPasswordValidationRule , times(1)).validate("test1234");
+        verifyZeroInteractions(passwordLengthValidationRule,
                 characterSequencePasswordValidationRule);
     }
 
@@ -124,8 +98,6 @@ public class PasswordValidationServiceTest {
         passwordValidationService.validate("test1234");
         verify(passwordLengthValidationRule  , times(1)).validate("test1234");
         verifyZeroInteractions(alphaNumericPasswordValidationRule,
-                letterPasswordValidationRule,
-                numericPasswordValidationRule,
                 characterSequencePasswordValidationRule);
     }
 
@@ -139,24 +111,20 @@ public class PasswordValidationServiceTest {
         passwordValidationService.validate("test1234");
         verify(characterSequencePasswordValidationRule, times(1)).validate("test1234");
         verifyZeroInteractions(alphaNumericPasswordValidationRule,
-                letterPasswordValidationRule,
-                numericPasswordValidationRule,
                 passwordLengthValidationRule);
     }
 
     @Test
     public void testValidate_numericAndLength() {
         Map<String, PasswordValidationRule> passwordValidationRules = getPasswordValidationRules();
-        List<String> configuredRules = Arrays.asList("LENGTH","NUMERIC");
+        List<String> configuredRules = Arrays.asList("LENGTH","ALPHA_NUMERIC");
 
         passwordValidationService = new PasswordValidationServiceImpl(passwordValidationRules, configuredRules);
 
         passwordValidationService.validate("test1234");
         verify(passwordLengthValidationRule  , times(1)).validate("test1234");
-        verify(numericPasswordValidationRule  , times(1)).validate("test1234");
-        verifyZeroInteractions(alphaNumericPasswordValidationRule,
-                letterPasswordValidationRule,
-                characterSequencePasswordValidationRule);
+        verify(alphaNumericPasswordValidationRule  , times(1)).validate("test1234");
+        verifyZeroInteractions(characterSequencePasswordValidationRule);
     }
 
     @Test
@@ -170,18 +138,14 @@ public class PasswordValidationServiceTest {
         passwordValidationService = new PasswordValidationServiceImpl(passwordValidationRules, configuredRules);
 
         passwordValidationService.validate("test1234");
-        verifyZeroInteractions(alphaNumericPasswordValidationRule,
-                passwordLengthValidationRule,
-                numericPasswordValidationRule,
-                letterPasswordValidationRule,
+        verifyZeroInteractions(passwordLengthValidationRule,
+                alphaNumericPasswordValidationRule,
                 characterSequencePasswordValidationRule);
     }
 
     private Map<String, PasswordValidationRule> getPasswordValidationRules() {
         Map<String, PasswordValidationRule> passwordValidationRules = new HashMap<>();
         passwordValidationRules.put("ALPHA_NUMERIC",alphaNumericPasswordValidationRule );
-        passwordValidationRules.put("LETTER",letterPasswordValidationRule );
-        passwordValidationRules.put("NUMERIC",numericPasswordValidationRule );
         passwordValidationRules.put("LENGTH",passwordLengthValidationRule );
         passwordValidationRules.put("CHAR_SEQUENCE",characterSequencePasswordValidationRule );
         return passwordValidationRules;

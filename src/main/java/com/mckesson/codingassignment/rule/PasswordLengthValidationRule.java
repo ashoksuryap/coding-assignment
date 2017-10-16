@@ -1,6 +1,8 @@
 package com.mckesson.codingassignment.rule;
 
 import com.mckesson.codingassignment.exception.PasswordValidationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -12,6 +14,8 @@ import java.text.MessageFormat;
  */
 @Component("LENGTH")
 public class PasswordLengthValidationRule implements PasswordValidationRule {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PasswordLengthValidationRule.class);
 
     private int passwordMinLength;
 
@@ -35,8 +39,10 @@ public class PasswordLengthValidationRule implements PasswordValidationRule {
      */
     @Override
     public void validate(String password) {
+        LOGGER.info("Validating password with password length validation rule");
         int passwordLength = password.length();
         if (passwordLength < passwordMinLength || passwordLength > passwordMaxLength) {
+            LOGGER.warn(passwordLengthValidationMessage);
             throw new PasswordValidationException(passwordLengthValidationMessage);
         }
     }

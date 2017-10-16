@@ -14,6 +14,10 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class PasswordValidationControllerTest {
+    private static final String ALPHANUMERIC_VALIDATION_MESSAGE = "password must consist of a mixture of lowercase letters and numerical digits only, with at least one of each";
+    private static final String LENGTH_VALIDATION_MESSAGE = "password length must be between 5 and 12 characters";
+    private static final String CHARACTER_SEQUENCE_VALIDATION_MESSAGE = "password must not contain any sequence of characters immediately followed by the same sequence";
+
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -40,7 +44,7 @@ public class PasswordValidationControllerTest {
         ResponseEntity<String> responseEntity =
                 restTemplate.postForEntity("/password/validate", password, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-        assertEquals("password must contain at least one number", responseEntity.getBody());
+        assertEquals(ALPHANUMERIC_VALIDATION_MESSAGE, responseEntity.getBody());
     }
 
     @Test
@@ -49,7 +53,7 @@ public class PasswordValidationControllerTest {
         ResponseEntity<String> responseEntity =
                 restTemplate.postForEntity("/password/validate", password, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-        assertEquals("password must contain at least one letter and all letters should be in lower case", responseEntity.getBody());
+        assertEquals(ALPHANUMERIC_VALIDATION_MESSAGE, responseEntity.getBody());
     }
 
     @Test
@@ -58,7 +62,7 @@ public class PasswordValidationControllerTest {
         ResponseEntity<String> responseEntity =
                 restTemplate.postForEntity("/password/validate", password, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-        assertEquals("password must contain at least one letter and all letters should be in lower case", responseEntity.getBody());
+        assertEquals(ALPHANUMERIC_VALIDATION_MESSAGE, responseEntity.getBody());
     }
 
     @Test
@@ -67,7 +71,7 @@ public class PasswordValidationControllerTest {
         ResponseEntity<String> responseEntity =
                 restTemplate.postForEntity("/password/validate", password, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-        assertEquals("password must be a combination of alphanumeric characters", responseEntity.getBody());
+        assertEquals(ALPHANUMERIC_VALIDATION_MESSAGE, responseEntity.getBody());
     }
 
     @Test
@@ -92,7 +96,7 @@ public class PasswordValidationControllerTest {
         ResponseEntity<String> responseEntity =
                 restTemplate.postForEntity("/password/validate", password, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-        assertEquals("password length must be between 5 and 12 characters", responseEntity.getBody());
+        assertEquals(LENGTH_VALIDATION_MESSAGE, responseEntity.getBody());
     }
 
     @Test
@@ -109,7 +113,7 @@ public class PasswordValidationControllerTest {
         ResponseEntity<String> responseEntity =
                 restTemplate.postForEntity("/password/validate", password, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-        assertEquals("password must not contain any sequence of characters immediately followed by the same sequence", responseEntity.getBody());
+        assertEquals(CHARACTER_SEQUENCE_VALIDATION_MESSAGE, responseEntity.getBody());
     }
 
     @Test
@@ -118,6 +122,6 @@ public class PasswordValidationControllerTest {
         ResponseEntity<String> responseEntity =
                 restTemplate.postForEntity("/password/validate", password, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-        assertEquals("password length must be between 5 and 12 characters", responseEntity.getBody());
+        assertEquals(LENGTH_VALIDATION_MESSAGE, responseEntity.getBody());
     }
 }
