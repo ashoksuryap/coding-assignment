@@ -8,8 +8,9 @@ Write a password validation service, meant to be configurable via IoC (using dep
 * Must not contain any sequence of characters immediately followed by the same sequence.
 
 ### ASSUMPTIONS
-We continue to validate password with other rules when one of the rules is failed. 
-No need to consider order of rules
+* We continue to validate password with other rules when one of the rules is failed. 
+* No need to consider order of rules
+* Internationalization is not required for this application
 
 
 ### IMPLEMENTATION
