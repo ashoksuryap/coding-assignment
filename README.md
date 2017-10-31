@@ -7,6 +7,11 @@ Write a password validation service, meant to be configurable via IoC (using dep
 * Must be between 5 and 12 characters in length.
 * Must not contain any sequence of characters immediately followed by the same sequence.
 
+### ASSUMPTIONS
+We continue to validate password with other rules when one of the rules is failed. 
+No need to consider order of rules
+
+
 ### IMPLEMENTATION
 * using Spring Boot for rapid application ddevelopment.
 * using Spring IOC container for Dependency Injection 
@@ -19,4 +24,3 @@ Write a password validation service, meant to be configurable via IoC (using dep
 * For dynamically enabling/disabling rules, we can configure rules in `application.properties` file with `password.validation.rules` propery. Only the rules specified with this property are applied during password validation.
 * Password min and max length are configurable in `application.properties` file. Default value for min length is 5 and max value is 12.
 * Implemented `PasswordValidationController` as client for password validation service. Its a Rest controller.
-* I am assuming that we do not need to consider order of rules. If we want rules ordering, we can have a property in application properties file to specify order of rules and inject it 'PasswordValidationServiceImpl' class
