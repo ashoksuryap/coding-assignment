@@ -15,17 +15,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
     /**
-     * This method handles PasswordValidationException
-     * @param ex
-     * @param request
-     * @return ResponseEntity - Returns status code 400 when password validation fails
-     */
-    @ExceptionHandler(PasswordValidationException.class)
-    protected ResponseEntity<Object> handleException(PasswordValidationException ex, WebRequest request) {
-        return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
-    }
-
-    /**
      * This method handles when exception when request body is null
      * @param ex
      * @param headers
@@ -36,6 +25,17 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         return handleExceptionInternal(ex, "request body can not be null", new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    /**
+     * This method handles RuntimeException
+     * @param ex
+     * @param request
+     * @return ResponseEntity - Returns status code 500 for RuntimeException
+     */
+    @ExceptionHandler(RuntimeException.class)
+    protected ResponseEntity<Object> handleException(RuntimeException ex, WebRequest request) {
+        return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 
 }

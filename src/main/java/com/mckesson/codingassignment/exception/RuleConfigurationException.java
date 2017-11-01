@@ -3,9 +3,9 @@ package com.mckesson.codingassignment.exception;
 /**
  * Exception thrown when password validation fails.
  */
-public class PasswordValidationException extends RuntimeException {
+public class RuleConfigurationException extends RuntimeException {
 
-    public PasswordValidationException(String message) {
+    public RuleConfigurationException(String message) {
         super(message);
     }
 }
